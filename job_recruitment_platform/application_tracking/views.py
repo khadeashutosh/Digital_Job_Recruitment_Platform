@@ -13,7 +13,6 @@ from common.tasks import send_email
 from .forms import JobAdvertForm, JobApplicationForm
 from .models import JobAdvert, JobApplication
 
-
 @login_required
 def create_advert(request: HttpRequest):
     form = JobAdvertForm(request.POST or None)
