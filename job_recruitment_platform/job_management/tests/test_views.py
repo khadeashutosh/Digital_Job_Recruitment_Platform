@@ -24,7 +24,6 @@ def test_register_user(client: Client):
     assert messages[0].level_tag == "success"
     assert "Verification code sent to" in str(messages[0])
 
-
 def test_register_user_duplicate_email(client: Client, user_instance):
     url = reverse("register")
     request_data = {"email": user_instance.email, "password": "abc"}
