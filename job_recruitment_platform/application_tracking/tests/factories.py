@@ -22,7 +22,6 @@ class JobApplicationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = JobApplication
 
-    
     name = fake.name()
     portfolio_url = fake.url()
     cv = fake.file_path()
