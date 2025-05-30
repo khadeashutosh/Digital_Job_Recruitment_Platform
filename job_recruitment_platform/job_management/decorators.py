@@ -9,5 +9,4 @@ def redirect_autheticated_user(view_func):
             return redirect("home")
         
         return view_func(request, *args, **kwargs)
-    
     return wrapper
