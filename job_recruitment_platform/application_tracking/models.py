@@ -9,7 +9,6 @@ from common.models import BaseModel
 from .enums import (ApplicationStatus, EmploymentType, ExperienceLevel,
                     LocationTypeChoice)
 
-
 class JobAdvertQuerySet(models.QuerySet):
 
     def active(self):
