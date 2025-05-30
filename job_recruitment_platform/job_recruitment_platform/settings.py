@@ -26,7 +26,6 @@ from decouple import config
 SECRET_KEY = config("SECRET_KEY", default="fallback-secret-key")
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
