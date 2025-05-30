@@ -8,12 +8,8 @@ from django.shortcuts import redirect, render
 from django.utils.crypto import get_random_string
 
 from common.tasks import send_email
-
 from .decorators import redirect_autheticated_user
 from .models import PendingUser, Token, TokenType, User
-
-# Create your views here.
-
 
 def home(request: HttpRequest):
     return render(request, "home.html")
