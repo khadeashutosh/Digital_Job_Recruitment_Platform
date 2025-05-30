@@ -30,9 +30,7 @@ class JobAdvertForm(ModelForm):
             "location": forms.TextInput(attrs={"placeholder":"Optional", "class":"form-control"}),
             "deadline": forms.DateInput(attrs={"placeholder":"Date", "class":"form-control", "type":"date"}),
             "skills": forms.TextInput(attrs={"placeholder":"Comma separated skills", "class":"form-control"}),
-
         }
-
 
 class JobApplicationForm(ModelForm):
     class Meta:
