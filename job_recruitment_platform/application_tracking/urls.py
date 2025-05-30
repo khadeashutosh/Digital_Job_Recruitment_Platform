@@ -12,5 +12,4 @@ urlpatterns = [
     path("<uuid:job_application_id>/decide/", views.decide, name="decide"),
     path("<uuid:advert_id>/update/", views.update_advert, name="update_advert"),
     path("<uuid:advert_id>/delete/", views.delete_advert, name="delete_advert"),
-
 ]
