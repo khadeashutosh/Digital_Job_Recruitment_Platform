@@ -19,7 +19,6 @@ from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
 from application_tracking.views import list_adverts
-
 urlpatterns = [
     path("", list_adverts, name="home"),
     path('admin/', admin.site.urls),
