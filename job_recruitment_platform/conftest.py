@@ -2,13 +2,11 @@ import pytest
 from django.contrib.auth.hashers import make_password
 from django.test.client import Client
 
-from accounts.models import User
-
+from job_management.models import User
 
 @pytest.fixture
 def client():
     return Client()
-
 
 @pytest.fixture
 def user_instance(db):
@@ -16,12 +14,10 @@ def user_instance(db):
         email="randomabc@gmail.com", password=make_password("abcd")
     )
 
-
 @pytest.fixture
 def auth_user_password() -> str:
     """Returns the password needed for authentication"""
     return "abcd"
-
 
 @pytest.fixture
 def authenticate_user_client(
