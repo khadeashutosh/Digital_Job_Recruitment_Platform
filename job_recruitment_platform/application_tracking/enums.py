@@ -19,8 +19,6 @@ LocationTypeChoice = [
     ("Hybrid", "Hybrid"),
     ("Remote", "Remote"),
 ]
-
-
 class ApplicationStatus(models.TextChoices):
     APPLIED = ("APPLIED", "APPLIED")
     REJECTED = ("REJECTED", "REJECTED")
