@@ -1,1 +1,1 @@
-# Digital_Job_Recruitment_Platform
+# Digital_Job_Recruitment_Platform Project
