@@ -1,12 +1,18 @@
-{% extends 'base.html' %} {% block title %} | Login {% endblock %} {% block
-content %}
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}
+Login|EazyJobs
+{%endblock %} 
+{% block content %}
 <div class="auth-content">
   <div class="auth-container">
-    <span> {% include 'alerts.html' %} </span>
+    {% include 'alerts.html' %}
+
     <div class="auth-card">
       <div class="auth-header">
         <h2><span class="icon">🔓</span> Login</h2>
       </div>
+
       <form method="post" action="">
         {% csrf_token %}
         <div class="form-group">
@@ -20,19 +26,22 @@ content %}
             required
           />
         </div>
+
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
           <input
             type="password"
             id="password"
             name="password"
-            placeholder="password"
+            placeholder="Password"
             class="form-control"
             required
           />
         </div>
+
         <button type="submit" class="btn">Login</button>
       </form>
+
       <div
         class="form-group"
         style="
@@ -42,7 +51,6 @@ content %}
         "
       >
         <a href="{% url 'register' %}" style="color: #1e3a64">Register</a>
-
         <a href="{% url 'reset_password_via_email' %}" style="color: #1e3a64"
           >Forgot password?</a
         >
@@ -50,5 +58,4 @@ content %}
     </div>
   </div>
 </div>
-
 {% endblock %}
