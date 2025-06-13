@@ -11,12 +11,13 @@ from common.tasks import send_email
 from .decorators import redirect_autheticated_user
 from .models import PendingUser, Token, TokenType, User
 
+
 def home(request: HttpRequest):
     return render(request, "home.html")
 
 
 @redirect_autheticated_user
-def login(request: HttpRequest):
+def login_view(request: HttpRequest):
     if request.method == "POST":
         email: str = request.POST.get("email")
         password: str = request.POST.get("password")
@@ -35,7 +36,7 @@ def login(request: HttpRequest):
         return render(request, "login.html")
 
 
-def logout(request: HttpRequest):
+def logout_view(request: HttpRequest):
     auth.logout(request)
     messages.success(request, "You are now logged out.")
     return redirect("home")
@@ -52,29 +53,27 @@ def register(request: HttpRequest):
             messages.error(request, "Email exists on the platform")
             return redirect("register")
 
-        else:
-            verification_code = get_random_string(10)
-            PendingUser.objects.update_or_create(
-                email=cleaned_email,
-                defaults={
-                    "password": make_password(password),
-                    "verification_code": verification_code,
-                    "created_at": datetime.now(timezone.utc),
-                },
-            )
-            send_email.delay(
-                "Verify Your Account",
-                [cleaned_email],
-                "emails/email_verification_template.html",
-                context={"code": verification_code},
-            )
-            messages.success(request, f"Verification code sent to {cleaned_email}")
-            return render(
-                request, "verify_account.html", context={"email": cleaned_email}
-            )
+        verification_code = get_random_string(10)
+        PendingUser.objects.update_or_create(
+            email=cleaned_email,
+            defaults={
+                "password": make_password(password),
+                "verification_code": verification_code,
+                "created_at": datetime.now(timezone.utc),
+            },
+        )
+        send_email(
+            "Verify Your Account",
+            [cleaned_email],
+            "emails/email_verification_template.html",
+            context={"code": verification_code},
+        )
+        messages.success(request, f"Verification code sent to {cleaned_email}")
+        return render(
+            request, "verify_account.html", context={"email": cleaned_email}
+        )
 
-    else:
-        return render(request, "register.html")
+    return render(request, "register.html")
 
 
 def verify_account(request: HttpRequest):
@@ -92,9 +91,8 @@ def verify_account(request: HttpRequest):
             auth.login(request, user)
             messages.success(request, "Account verified. You are now logged in")
             return redirect("home")
-        else:
-            messages.error(request, "Invalid or expired verification code")
-            return render(request, "verify_account.html", {"email": email}, status=400)
+        messages.error(request, "Invalid or expired verification code")
+        return render(request, "verify_account.html", {"email": email}, status=400)
 
 
 def send_password_reset_link(request: HttpRequest):
@@ -122,12 +120,10 @@ def send_password_reset_link(request: HttpRequest):
             messages.success(request, "Reset link sent to your email")
             return redirect("reset_password_via_email")
 
-        else:
-            messages.error(request, "Email not found")
-            return redirect("reset_password_via_email")
+        messages.error(request, "Email not found")
+        return redirect("reset_password_via_email")
 
-    else:
-        return render(request, "forgot_password.html")
+    return render(request, "forgot_password.html")
 
 
 def verify_password_reset_link(request: HttpRequest):
@@ -150,8 +146,6 @@ def verify_password_reset_link(request: HttpRequest):
 
 
 def set_new_password_using_reset_link(request: HttpRequest):
-    """Set a new password given the token sent to the user email"""
-
     if request.method == "POST":
         password1: str = request.POST.get("password1")
         password2: str = request.POST.get("password2")
