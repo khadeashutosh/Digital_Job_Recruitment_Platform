@@ -52,7 +52,7 @@ def test_verify_account_valid_code(client: Client):
 
 def test_verify_account_invalid_code(client: Client):
     pending_user = PendingUser.objects.create(
-        email="abc@gmail.com", verification_code="5555", password="randompass"
+        email="dummyuser@example.com", verification_code="5555", password="dummypassword123"
     )
     url = reverse("verify_account")
     request_data = {"email": pending_user.email, "code": "invalidcode"}
