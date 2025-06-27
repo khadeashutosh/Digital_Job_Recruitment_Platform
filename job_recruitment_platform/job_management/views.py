@@ -45,44 +45,50 @@ def logout_view(request: HttpRequest):
 @redirect_autheticated_user
 def register(request: HttpRequest):
     if request.method == "POST":
-        email: str = request.POST["email"]
-        password: str = request.POST["password"]
-        cleaned_email = email.lower()
+        email: str = request.POST.get("email", "").strip().lower()
+        password: str = request.POST.get("password", "")
 
-        if User.objects.filter(email=cleaned_email).exists():
-            messages.error(request, "Email exists on the platform")
+        if not email or not password:
+            messages.error(request, "Email and password are required.")
             return redirect("register")
 
+        if User.objects.filter(email=email).exists() or PendingUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists or is pending verification.")
+            return redirect("register")
+
+        PendingUser.objects.filter(email=email).delete()
+
         verification_code = get_random_string(10)
-        PendingUser.objects.update_or_create(
-            email=cleaned_email,
-            defaults={
-                "password": make_password(password),
-                "verification_code": verification_code,
-                "created_at": datetime.now(timezone.utc),
-            },
+
+        PendingUser.objects.create(
+            email=email,
+            password=make_password(password),
+            verification_code=verification_code,
+            created_at=datetime.now(timezone.utc),
         )
+
         send_email(
             "Verify Your Account",
-            [cleaned_email],
+            [email],
             "emails/email_verification_template.html",
             context={"code": verification_code},
         )
-        messages.success(request, f"Verification code sent to {cleaned_email}")
-        return render(
-            request, "verify_account.html", context={"email": cleaned_email}
-        )
+
+        messages.success(request, f"Verification code sent to {email}")
+        return render(request, "verify_account.html", context={"email": email})
 
     return render(request, "register.html")
 
 
 def verify_account(request: HttpRequest):
     if request.method == "POST":
-        code: str = request.POST["code"]
-        email: str = request.POST["email"]
+        code: str = request.POST.get("code", "").strip()
+        email: str = request.POST.get("email", "").strip().lower()
+
         pending_user: PendingUser = PendingUser.objects.filter(
             verification_code=code, email=email
         ).first()
+
         if pending_user and pending_user.is_valid():
             user = User.objects.create(
                 email=pending_user.email, password=pending_user.password
@@ -91,6 +97,7 @@ def verify_account(request: HttpRequest):
             auth.login(request, user)
             messages.success(request, "Account verified. You are now logged in")
             return redirect("home")
+
         messages.error(request, "Invalid or expired verification code")
         return render(request, "verify_account.html", {"email": email}, status=400)
 
@@ -111,7 +118,7 @@ def send_password_reset_link(request: HttpRequest):
             )
 
             email_data = {"email": email.lower(), "token": token.token}
-            send_email.delay(
+            send_email(
                 "Your Password Reset Link",
                 [email],
                 "emails/password_reset_template.html",
