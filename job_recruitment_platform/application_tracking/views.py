@@ -76,18 +76,25 @@ def delete_advert(request: HttpRequest, advert_id):
     return redirect("my_jobs")
 
 
+@login_required
 def apply(request: HttpRequest, advert_id):
     advert = get_object_or_404(JobAdvert, pk=advert_id)
+
     if request.method == "POST":
         form = JobApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            email = form.cleaned_data["email"]
-            if advert.applications.filter(email__iexact=email).exists():
+            already_applied = JobApplication.objects.filter(
+                job_advert=advert,
+                user=request.user
+            ).exists()
+
+            if already_applied:
                 messages.error(request, "You have already applied for this position.")
                 return redirect("job_advert", advert_id=advert.id)
 
             application = form.save(commit=False)
             application.job_advert = advert
+            application.user = request.user
             application.save()
             messages.success(request, "Application submitted successfully.")
             return redirect("job_advert", advert_id=advert.id)
@@ -102,7 +109,7 @@ def apply(request: HttpRequest, advert_id):
 
 @login_required
 def my_applications(request: HttpRequest):
-    applications = JobApplication.objects.filter(email=request.user.email)
+    applications = JobApplication.objects.filter(user=request.user).order_by('-created_at')
     paginator = Paginator(applications, 10)
     page = request.GET.get("page")
     paginated = paginator.get_page(page)
