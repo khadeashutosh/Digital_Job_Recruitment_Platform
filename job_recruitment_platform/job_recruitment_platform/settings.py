@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security
 SECRET_KEY = config("SECRET_KEY", default="fallback-secret-key")
 DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  
 
 # Applications
 INSTALLED_APPS = [
@@ -51,6 +51,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',  
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -96,7 +97,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default PK field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ Email settings (Safe Console Backend)
+#  Email settings - console for development
 EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = config("EMAIL_HOST", default="")
 EMAIL_PORT = config("EMAIL_PORT", cast=int, default=587)
@@ -105,7 +106,7 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="webmaster@localhost")
 
-# ✅ Celery settings
+# Celery settings
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER = "json"
