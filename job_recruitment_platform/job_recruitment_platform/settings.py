@@ -71,6 +71,17 @@ DATABASES = {
     }
 }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  
+        'NAME': 'Job_Recruitment_Platform_db',           
+        'USER': 'postgres',         
+        'PASSWORD': '@Ashu1010', 
+        'HOST': 'localhost',      
+        'PORT': '5430',           
+    }
+}
+
 # Password Validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
